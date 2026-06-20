@@ -20,8 +20,6 @@ require 'net/http'
 require 'uri'
 require 'open3'
 
-set :bind, '0.0.0.0' #Note: Binding to 0.0.0.0 exposes the app to anyone on your network — the Restart/Stop buttons on the toolbar can shut down the server, so only do this on trusted networks.
-
 OLLAMA_HOST = ENV['OLLAMA_HOST'] || 'http://localhost:11434'
 
 STYLE = '<style>
@@ -299,7 +297,7 @@ get '/ol_run' do
       </style>
       <div id="chat"></div>
       <div class="form">
-          <input type="text" id="message" placeholder="Ask me anything..." autofocus />
+          <input type="text" id="message" placeholder="Ask me anything..." autofocus spellcheck="true" />
           <button id="send-btn" onclick="send()">Send</button>
           <button id="stop-btn" onclick="stop()">Stop</button>
       </div>
