@@ -20,6 +20,8 @@ require 'net/http'
 require 'uri'
 require 'open3'
 
+set :bind, '0.0.0.0' #Note: Binding to 0.0.0.0 exposes the app to anyone on your network — the Restart/Stop buttons on the toolbar can shut down the server, so only do this on trusted networks.
+
 OLLAMA_HOST = ENV['OLLAMA_HOST'] || 'http://localhost:11434'
 
 STYLE = '<style>
