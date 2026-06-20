@@ -1,0 +1,9 @@
+=== OllaOS Cache Log ===
+Session started: 2026-06-20 18:28:39
+
+[2026-06-20 18:28:54] [USER]
+hi
+
+[2026-06-20 18:29:17] [MODEL]
+Hello there. How can I assist you?
+

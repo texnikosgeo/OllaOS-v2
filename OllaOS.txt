@@ -1,0 +1,117 @@
+================================================================================
+  OllaOS v2 — AI-Powered Debian Assistant
+================================================================================
+  EXPERIMENTAL SOFTWARE — USE AT YOUR OWN RISK
+================================================================================
+
+This project is an experimental demonstration that integrates Ollama local LLMs
+with Ruby scripts and a Sinatra web interface to control a Debian Linux system.
+The AI model can trigger system commands (disk checks, package updates, file
+downloads, web lookups, etc.) based on keyword detection in your chat messages.
+
+BY USING THIS SOFTWARE YOU ACKNOWLEDGE AND ACCEPT THAT:
+
+  - This software is provided "AS IS", without warranty of any kind.
+  - The AI model may misinterpret your requests and execute unintended
+    system commands, modify files, or change system state.
+  - You are solely responsible for any damage, data loss, or security
+    issues that may arise from running this software.
+  - Always review what commands the application will execute before
+    running it, especially on production or non-disposable systems.
+  - Run in a sandboxed/isolated environment (VM, container, or dedicated
+    test hardware) until you fully understand the behavior.
+
+================================================================================
+  CREDITS
+================================================================================
+
+  This project was built entirely through conversation with:
+
+    OpenCode (https://opencode.ai)
+    Big Pickle model from ZEN AI Big Pickle is a stealth model that’s free 
+	on OpenCode for a limited time. The team is using this time 
+	to collect feedback and improve the model.
+
+  Without these tools, this project would not exist. They served as the
+  primary development interface — reading, writing, debugging, and
+  refactoring all code through natural language interaction.
+
+================================================================================
+  ARCHITECTURE (v2)
+================================================================================
+
+  The application follows a simple loop:
+
+    1. User sends a chat message
+    2. Ruby backend writes the message to OllaOS.Cache.txt
+    3. Ruby scans the message for keywords matching available tools
+    4. If a match is found, the corresponding Ruby script is executed
+       via Open3 (not inline shell commands)
+    5. The tool output is saved to OllaOS.Cache.txt
+    6. The entire cache log is sent to the LLM as context
+    7. The LLM reads the log and composes a response
+    8. The response is saved to OllaOS.Cache.txt and shown to the user
+    9. The cache persists across the session, building a running log
+
+================================================================================
+  FILES
+================================================================================
+
+  ol_sin.rb          Main Sinatra web app (all routes, API, tool detection)
+  OllaOS.Cache.txt   Session log — all prompts, tool outputs, model replies
+
+  Tool scripts (each is an independent CLI Ruby script):
+    df.rb            Show disk space usage           (df -h)
+    ls.rb            List directory contents         (ls -la)
+    pwd.rb           Show current directory path     (pwd)
+    top.rb           Show running system processes   (top -bn1)
+    fastfetch.rb     Show detailed system info       (fastfetch)
+    geany.rb         Launch the Geany text editor
+    up_deb.rb        Update & upgrade Debian         (apt)
+    web_search.rb    Look up information on the web  (ddgr)
+    wget.rb          Download a file from a URL      (wget)
+    web_scrub.rb     Extract text from a webpage     (lynx)
+    ol_list.rb       List downloaded Ollama models   (ollama list)
+    ol_pull.rb       Download an Ollama model        (ollama pull)
+    ol_rm.rb         Delete an Ollama model          (ollama rm)
+    ol_run.rb        Run an Ollama model interactively
+
+================================================================================
+  KEYWORDS (tool auto-detection)
+================================================================================
+
+  The backend matches user messages against these patterns (case-insensitive):
+
+    df         disk, space, storage
+    ls         list files, directory, contents, what is here
+    pwd        current directory/folder/path, where am I
+    top        process, running, top
+    fastfetch  system info, fastfetch, hardware, cpu, memory, specs, review
+    geany      geany, text editor, editor
+    up_deb     update, upgrade system/packages, apt
+    lookup     look up, search, find info/about, what is, tell me/about
+    wget       download file, wget
+    scrub      scrub, extract text/content/page, fetch URL
+    ol_list    list ollama/models, list downloaded
+    ol_pull    pull, download model, install ollama/model
+    ol_rm      remove, delete, rm model
+
+================================================================================
+  RUNNING
+================================================================================
+
+  Requirements:
+    - Debian Linux (or any Linux with Ruby 3.x)
+    - Ollama (running locally on port 11434)
+    - An Ollama model (e.g. samuser3/granite3.2-gemma3:4b)
+    - Ruby gems: sinatra, json, net/http, open3 (all stdlib except sinatra)
+    - Optional tools: ddgr (web search), lynx (web scrub), fastfetch, geany
+
+  Start:
+    cd v2/
+    gem install sinatra
+    ruby ol_sin.rb
+
+  Then open http://localhost:4567 in a browser.
+
+================================================================================
